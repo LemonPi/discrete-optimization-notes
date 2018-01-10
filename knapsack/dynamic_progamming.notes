@@ -1,0 +1,46 @@
+-----------------------------------------------------------
+    Basic Principles
+-----------------------------------------------------------
+- divide and conquer
+- bottom up computation
+
+-----------------------------------------------------------
+    DP on Knapsack
+-----------------------------------------------------------
+- conventions and notations
+	- I = {1..n}
+	- O(k,j) denotes the optimal solution to knapsack with capacity k and items [1..j]
+- interested in O(K,n)
+- assume we know O(k,j-1) for all k in 0..K
+- want to solve O(k,j)
+	- interested in one more item j
+	- if w_j <= k, get 2 options (otherwise don't select)
+		- do not select
+			- O(k,j-1)
+		- select
+			- v_j + O(k - w_j, j-1)
+- O(k,0) = 0 for all k
+- compute recursive equation bottom up
+	- start with 0 items
+	- continue with 1 item
+	- ...
+	- table representation
+		- each row is a capacity
+		- each col is an item
+		- build table by inserting col to the right
+			- each value of this col just requires values on the col prior
+		- last col last row is the max value (solution objective function value)
+		- find solution decision variables by backtracking table
+			- if value same as col on left, haven't selected item
+			- else selected and now look at capacity - item weight
+
+-----------------------------------------------------------
+    DP Complexity
+-----------------------------------------------------------
+- O(K*n) time and memory
+	- fill the table
+	- encoded with log(K) bits
+- actually exponential to input size
+	- pseudo polynomial
+	- efficient when K is small
+	- table blows up relatively easily

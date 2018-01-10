@@ -1,0 +1,34 @@
+-----------------------------------------------------------
+    Informal Modelling
+-----------------------------------------------------------
+- set of items I
+	- each item i E I
+		- weight w_i
+		- value v_i
+- capacity K for knapsack
+- find subset of items in I that
+	- has max value
+	- sum of weights don't exceed K
+
+-----------------------------------------------------------
+    Modelling techniques
+-----------------------------------------------------------
+- choose some #decision variables#
+	- encodes the result we're interested in
+- express problem constraints in terms of these variables
+- express the objective function
+- it is a declarative formulation
+	- specify 
+
+-----------------------------------------------------------
+    Formal Modelling
+-----------------------------------------------------------
+- decision variables
+	- x_i denotes whether item is selected in the solution
+		- x_i = 1 means item is selected
+		- x_i = 0 means otherwise
+- problem constraints
+	- sum(every i in I) {w_i * x_i} <= K
+- objective function
+	- sum(every i in I) {v_i * x_i}
+- maximize objective function subject to the problem constraint
