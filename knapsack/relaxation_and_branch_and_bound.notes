@@ -1,0 +1,49 @@
+-----------------------------------------------------------
+    Sample Problem
+-----------------------------------------------------------
+- max 45x1 + 48x2 + 35x3
+- subject to 5x1 + 8x2 + 3x3 <= 10
+- xi E {0,1} (i E 1..3)
+
+-----------------------------------------------------------
+    Branch and Bound
+-----------------------------------------------------------
+- iterative 2 steps
+	- branching
+		- split problem into subproblems
+			- like exhaustive search
+		eg. selecting an individual item
+		- more sophisticated ways of branching, but simplest is selecting in item order
+	- bounding
+		- optimisitc estimate of best solution
+			- get bounds by #relaxation#
+
+-----------------------------------------------------------
+    B&B applied to Sample Problem
+-----------------------------------------------------------
+- relax capacity constraint
+	- assume there is no capacity constraint
+- optimisitc evaluation of total value is that we can select everything
+	- start with 128 (45+48+35)
+- either select 1 or not
+	- select
+		- value 45
+		- capacity 5
+		- max value still 128
+	- don't select
+		- value 0
+		- capacity 0
+		- max value 83
+			- subtract v1
+- use depth first and find good feasible solutions
+- stop search when
+	- reached infeasible solution
+	- optimisitc max value becomes less than best feasible value
+- this relaxation is very loose
+	- doesn't lead to much pruning
+- try #linear relaxation#
+	- relax integer requirement on decision variable xi E [0,1]
+	- in general easier to compute
+	- optimistic value is greedily select based on value density
+		- select fraction of last item
+
