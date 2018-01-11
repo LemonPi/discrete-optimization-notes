@@ -1,0 +1,17 @@
+-----------------------------------------------------------
+    Problem Approach
+-----------------------------------------------------------
+1. implement simplest
+	- greedy
+	- inspect solution for how well it does
+2. understand shortcomings
+	- use various learned techniques
+3. use relaxation / optimistic evaluation to determine how optimal solution is
+	- solution quality limit
+
+- greedy baseline
+	- quality improvement
+		- constraint programming
+		- mixed integer programming
+	- scalability improvement
+		- local search
