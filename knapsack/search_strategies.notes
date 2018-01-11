@@ -1,0 +1,31 @@
+-----------------------------------------------------------
+    Depth First
+-----------------------------------------------------------
+- prune when it finds new node worse than found solution
+- O(d) memory efficiency
+	- holds 1 branch in memory at a time
+
+-----------------------------------------------------------
+    Best First
+-----------------------------------------------------------
+- explore node in frontier with best optimistic evaluation
+- O(b^d) space and time efficiency
+	- in worst case has to hold entire tree in memory
+
+-----------------------------------------------------------
+    Limited Discrepancy
+-----------------------------------------------------------
+- assumes we have a good heuristic
+	- search tree is binary
+	- following heuristic means branching left
+	- brnaching right means heuristic was wrong
+- want to avoid mistakes
+- explore in increasing order of mistakes
+	- trust the heuristic less and less
+	- wave 1 makes all lefts
+	- wave 2 makes 1 right then all lefts
+		- make right at root
+		- make right at first level
+		...
+	...
+- time and space efficiency trade off depends on implementation
