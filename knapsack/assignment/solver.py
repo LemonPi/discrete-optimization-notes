@@ -22,6 +22,40 @@ def greedy(items, capacity):
     return value, 0, taken
 
 
+def dp(items, capacity):
+    # each col is an item and each row is an increase in capacity
+    # print(len(items), capacity)
+    table = [[0] * (len(items) + 1) for i in range(capacity+1)]
+    # table[k][j] gives optimal value for knapsack with capacity k and items up to j=item.index+1
+    for item in items:
+        for k in range(capacity+1):
+            j = item.index + 1
+            if item.weight <= k:
+                # max of not selecting item j (O(k,j-1)) and selecting it (O(k-w_j,j-1) + v_j)
+                table[k][j] = max(table[k][j - 1], table[k - item.weight][j - 1] + item.value)
+            else:
+                # can't select it
+                table[k][j] = table[k][j - 1]
+
+    # for line in table:
+    #     print(line)
+    # need to backtrace for whether items are taken or not
+    value = table[capacity][len(items)]
+    taken = [0] * len(items)
+
+    row = capacity
+    for j in reversed(range(1, len(table[0]))):
+        if table[row][j] == table[row][j - 1]:
+            # not selected
+            pass
+        else:
+            index = j - 1
+            taken[index] = 1
+            row -= items[index].weight
+
+    return value, 1, taken
+
+
 def solve_it(input_data):
     # Modify this code to run your optimization algorithm
 
@@ -39,7 +73,13 @@ def solve_it(input_data):
         parts = line.split()
         items.append(Item(i - 1, int(parts[0]), int(parts[1])))
 
-    value, provenOptimal, taken = greedy(items, capacity)
+    # choose optimization method
+    method = dp
+    # default to greedy if problem size is too large
+    if capacity * item_count > 3e7:
+        method = greedy
+
+    value, provenOptimal, taken = method(items, capacity)
 
     # prepare the solution in the specified output format
     output_data = str(value) + ' ' + str(provenOptimal) + '\n'
