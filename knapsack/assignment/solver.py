@@ -130,7 +130,7 @@ def solve_it(input_data):
         items.append(Item(i - 1, int(parts[0]), int(parts[1])))
 
     # problems seem to go up to 10k
-    sys.setrecursionlimit(10000)
+    sys.setrecursionlimit(20000)
     # choose optimization method
 
     # determine how useful the heuristic will be
