@@ -1,0 +1,39 @@
+-----------------------------------------------------------
+    Computational paradigm
+-----------------------------------------------------------
+- use constraints to reduce set of values each variable can take
+	- remove values that can't appear in any solution
+	- implemented by propagation engine at core of any constraint solver
+- make a choice when no deduction can be performed
+	- choice is assigning a value to a variable (current understanding)
+
+-----------------------------------------------------------
+    Features
+-----------------------------------------------------------
+- can model problem at a very high level
+	- various ways to model each problem
+- complete
+- optimal (not a heuristic)
+
+-----------------------------------------------------------
+    Examples
+-----------------------------------------------------------
+- 8 queens problem
+	- each column is a decision variable
+		- variable value is row of queen
+	- constraints
+		- for i,j in R, i < j
+		- same row
+			- row[i] != row[j]
+		- upward diagonal
+			- row[i] != row[j] + (j - i)
+		- downward diagonal
+			- row[i] != row[j] - (j - i)
+
+-----------------------------------------------------------
+    Steps
+-----------------------------------------------------------
+1. choose decision variables
+2. determine the #domain# of each variable
+	- the #domain# is the set of values that a variable can take on
+3. express constraints in terms of the decision variables
