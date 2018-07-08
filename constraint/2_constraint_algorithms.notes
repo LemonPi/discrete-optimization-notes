@@ -1,0 +1,17 @@
+-----------------------------------------------------------
+    Linear Constraints over Integers
+-----------------------------------------------------------
+- a1x1 + ... + anxn >= b1y1 + ... + bmym
+- ai, bj >= 0 constants
+- xi, yj variables with domain D(xi), D(yj)
+- feasibility test
+	- test inequiality with max D(xi) and min D(yj)
+		- if true then feasible, otherwise not
+	- l = a1*max(D(x1)) + ... + an*max(D(xn))
+	- r = b1*min(D(y1)) + ... + bm*min(D(ym))
+- pruning
+	- move l except for xi over to right side
+	- aixi >= r - (l - ai*max(D(xi)))
+		- avoid double counting xi term
+	- xi >= ceil((r - (l - ai*max(D(xi)))) / ai)
+	- yi <= floor((l - (r - bi*min(D(yi)))) / bi)
