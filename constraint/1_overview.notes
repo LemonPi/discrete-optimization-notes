@@ -48,3 +48,5 @@
 		- given current domains, can this constraint be satisfied by any variable assignment?
 	2. pruning
 		- to be satisfied, have to remove values that cannot be part of any solution
+- each type of constraint has dedicated algorithms to implement those responsibilities
+	- exploit the structure and properties of the constraint
