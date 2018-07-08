@@ -29,6 +29,23 @@
 			- row[i] != row[j] + (j - i)
 		- downward diagonal
 			- row[i] != row[j] - (j - i)
+- SEND MORE MONEY
+	- assign each letter a digit to replace it such that 
+	   SEND 
+	+  MORE 
+	= MONEY
+	- one simple model (not the best)
+		- each letter is a decision variable
+			- domain is 0..9
+		- each carry (C1..C4) is a decision variable
+			- domain is 0..1
+		- constraints
+			- value[i] != value[j] for each letter assignment
+			- value[S] != 0
+			- value[M] != 0
+			- carry[4] == value[M]
+			- carry[3] + value[S] + value[M] == value[O] + 10*carry[4]
+			...
 
 -----------------------------------------------------------
     Steps
