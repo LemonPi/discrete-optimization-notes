@@ -37,3 +37,14 @@
 2. determine the #domain# of each variable
 	- the #domain# is the set of values that a variable can take on
 3. express constraints in terms of the decision variables
+
+-----------------------------------------------------------
+    Constraint
+-----------------------------------------------------------
+- indepdendent of each other
+- acts on domain store (set of domains of all variables)
+- 2 responsibilities
+	1. feasiblity checking
+		- given current domains, can this constraint be satisfied by any variable assignment?
+	2. pruning
+		- to be satisfied, have to remove values that cannot be part of any solution
