@@ -11,3 +11,16 @@
 - c is an array of Integers
 - x, y variables
 - x = c[y]
+
+-----------------------------------------------------------
+    Global constraints
+-----------------------------------------------------------
+- captures combinatorial substructures
+- allows exploitation with dedicated algorithm
+- discovers infeasibility earlier
+- allows more aggressive pruning
+eg. alldifferent(x1..xn)
+	- instead of creating pairwise not equal constraint, can have one alldiff
+eg. table constraint
+	- enumerate what are feasible combinations
+	- specify subset of cartesian product
