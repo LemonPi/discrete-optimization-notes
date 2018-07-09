@@ -26,8 +26,8 @@ eg. (3,3,2,2,1) satisfied by
 	0	1	1
 	1	0	1
 - model
-	rows = 1..v
-	cols = 1..b
+	range rows = 1..v
+	range cols = 1..b
 	var{int} m[rows, cols] in 0..1
 	- constraints
 		forall(i in rows)
@@ -46,3 +46,39 @@ eg. (3,3,2,2,1) satisfied by
 		lexleq(all(j in cols) m[i,j], all(j in cols) m[i+1,j])
 	forall(j in 1..b-1)
 		lexleq(all(i in rows) m[i,j], all(i in rows) m[i,j+1])
+
+-----------------------------------------------------------
+    Scene Allocation
+-----------------------------------------------------------
+- actor plays in some scenes
+- at most k scenes can be shot per day
+- each actor is paid by the day
+	- if they have to show up to shoot any scene they have to be payed
+- minimize total cost
+- model
+	range Scenes = ...
+	range Days = ...
+	range Actor = ...
+	int fee[Actor] = ...
+	set{Actor} appears[Scenes] = ...
+	set{int} which[a in Actor] = setof(i in Scenes) member(a, appears[i])
+	var{int} shoot[Scenes] in Days
+
+	minimize
+		sum(a in Actor) sum(d in Days)
+			fee[a] * or(s in which[a]) (shoot[ s ]=d)
+	subject to 
+		atmost(all(i in Days) 5, Days, shoot)
+- #value symmetry# in the days
+	- days are interchangeable
+	- swap all scenes in one day with that of another
+- eliminate symmetry
+	- schedule scene 1 (s1) on day 1
+	- schedule s2 on either day 1 or day 2
+		- day 2 or day 3... has no difference, so consider the earliest
+	- in general consider all scheduled days and 1 additional day
+	subject to
+		...
+		scene[1] = 1
+		forall(s in Scenes: s > 1)
+			scene[ s ] <= max(k in 1..s-1) scene[k] + 1
