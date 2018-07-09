@@ -1,0 +1,13 @@
+-----------------------------------------------------------
+    Reification
+-----------------------------------------------------------
+- transform a constraint into a 0/1 variable
+	- 1 if constraint satistifed
+
+-----------------------------------------------------------
+    Element Constraint
+-----------------------------------------------------------
+- ability to index an array/matrix with a variable/expression with variables
+- c is an array of Integers
+- x, y variables
+- x = c[y]
