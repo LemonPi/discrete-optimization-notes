@@ -8,3 +8,41 @@
 	2. value
 - ways to break symmetry
 	- symmetry-breaking constraints
+
+-----------------------------------------------------------
+    Balanced Incomplete Block Designs (BIBD)
+-----------------------------------------------------------
+- input
+	- v rows of output
+	- b columns of output
+	- r ones per row of output
+	- k ones per column of output
+	- l scalar product of rows in output
+		- intersection is at exactly l locations
+- output
+	- 0/1 matrix
+eg. (3,3,2,2,1) satisfied by
+	1	1	0
+	0	1	1
+	1	0	1
+- model
+	rows = 1..v
+	cols = 1..b
+	var{int} m[rows, cols] in 0..1
+	- constraints
+		forall(i in rows)
+			sum(y in cols) m[i,y] = r
+		forall(j in cols)
+			sum(x in rows) m[x,j] = k
+		forall(i in rows, j in rows, j > i)
+			sum(x in cols) (m[i, x] & m[j, x]) = l
+- lots of #variable symmetry# in this problem
+	- swapping any 2 rows or cols in solution is still a solution
+- break symmetry by imposing an order on variables
+	- lexicographic ordering
+		- very fast feasbility and pruning in practice
+	- apply to both rows and cols
+	forall(i in 1..v-1)
+		lexleq(all(j in cols) m[i,j], all(j in cols) m[i+1,j])
+	forall(j in 1..b-1)
+		lexleq(all(i in rows) m[i,j], all(i in rows) m[i,j+1])
