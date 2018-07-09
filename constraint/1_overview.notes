@@ -14,6 +14,9 @@
 	- various ways to model each problem
 - complete
 - optimal (not a heuristic)
+- focus is on feasibility
+	- optimize by solving a sequence of satisfaction problems
+		- find a solution then add a stricter constraint
 
 -----------------------------------------------------------
     Examples
