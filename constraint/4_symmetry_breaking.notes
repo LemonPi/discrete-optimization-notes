@@ -1,0 +1,10 @@
+-----------------------------------------------------------
+    Symmetry Breaking
+-----------------------------------------------------------
+- many problems have natural symmetry
+	- exploring symmetrical parts of search space is useless
+- kinds of symmetries
+	1. variable
+	2. value
+- ways to break symmetry
+	- symmetry-breaking constraints
