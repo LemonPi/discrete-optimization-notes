@@ -1,0 +1,8 @@
+-----------------------------------------------------------
+    Overview
+-----------------------------------------------------------
+- used to speed up models tremendously
+- semantically redundant
+	- do not exclude any solutions
+- reduces search space
+- express properties of solution not captured by model
