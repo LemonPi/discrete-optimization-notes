@@ -6,3 +6,25 @@
 	- do not exclude any solutions
 - reduces search space
 - express properties of solution not captured by model
+
+-----------------------------------------------------------
+    Examples
+-----------------------------------------------------------
+- magic series S = (S0..Sn) is magic if Si is the number of occurrences of i in S
+	eg. 2, 1, 2, 0, 0
+		- S0 = 2 (S3, S4)
+		- S1 = 1 (S1)
+	- model
+		int n = 5
+		range D = 0..n-1
+		var{int} series[D] in D
+
+		solve
+		forall(k in D)
+			series[k] = sum(i in D) (series[i]=k)
+	- must have n occurrences in total
+		sum(i in D) series[i] = n
+	- consider another requirement
+		- series[i] = x means there are x occurrences of i
+		- sum(i in D) series[i] = sum(i in D) i * series[i]
+		sum(i in D) i * series[i] = n
