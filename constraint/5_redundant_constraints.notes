@@ -28,6 +28,40 @@
 		- series[i] = x means there are x occurrences of i
 		- sum(i in D) series[i] = sum(i in D) i * series[i]
 		sum(i in D) i * series[i] = n
+- car sequencing
+	- cars require specific options
+		eg. leather seats, moonroof
+	- capacity constraints
+		eg. at most 2 out of 5 consecutive cars can have moonroofs
+	- a set of options make up a configuration
+	- model
+		range Slots = ...
+		range Configs = ...
+		range Options = ...
+		int demand[Configs] = ...
+		int nbCars = sum(c in Configs) demand[ c ]
+		// fraction of capacity constraint eg. 2/5 -> lb = 2, ub = 5
+		int lb[Options] = ...
+		int ub[Options] = ...
+		int requires[Options, Config] = ...
+		// what configuration to produce at this slot
+		var{int} line[Slots] in Configs
+		// auxillary variable - setup[o,s]=1 if slot[s] has a car requiring option o
+		var{int} setup[Options, Slots] in 0..1
+
+		solve
+		// demand constraint (have to satisfy demands)
+		forall(c in Configs)
+			(sum(s in Slots) (line[ s ] = c)) = demand[ c ]
+
+		// define setup variable
+		forall(s in Slots, o in Options)
+			setup[o,s] = requires[o, line[ s ]]
+
+		// capacity constraints
+		forall(o in Options, s in 1..nbCars-ub[o]+1)
+			(sum(j in s..s+ub[o]-1) setup[o,j]) <= lb[o]
+
 
 -----------------------------------------------------------
     Surrogate constraints
