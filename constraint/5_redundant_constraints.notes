@@ -61,6 +61,12 @@
 		// capacity constraints
 		forall(o in Options, s in 1..nbCars-ub[o]+1)
 			(sum(j in s..s+ub[o]-1) setup[o,j]) <= lb[o]
+	- leads to a lot of cases where model tries to produce all cars at the end slots
+		- leads to a lot of backtracking
+	- instead can work backwards from the right side
+	- needs remaining left side to be able to produce total demand - what can be produced at right
+		forall(o in Options, i in 1..demand[o])
+			(sum(s in 1..nbCars-i*ub[o]) setup[o,s]) >= demand[o] - i*lb[o]
 
 
 -----------------------------------------------------------
