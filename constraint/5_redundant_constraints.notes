@@ -28,3 +28,10 @@
 		- series[i] = x means there are x occurrences of i
 		- sum(i in D) series[i] = sum(i in D) i * series[i]
 		sum(i in D) i * series[i] = n
+
+-----------------------------------------------------------
+    Surrogate constraints
+-----------------------------------------------------------
+- combination of existing constraints
+	- such as through linear combination
+- improves global view/communication between constraints
