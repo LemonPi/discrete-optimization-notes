@@ -1,0 +1,40 @@
+-----------------------------------------------------------
+    Implementation Intuition
+-----------------------------------------------------------
+- more than 100 global constraints defined so far
+- after pruning we know every value of every variable is a part of some solution
+	- historical names
+		- arc consistency
+		- domain consistency
+	- essentially is optimal pruning
+		- can't prune more if only domains are considered
+	- may be impossible to implement in polynomial time in reality
+
+-----------------------------------------------------------
+    Knapsack
+-----------------------------------------------------------
+- binary knapsack
+	- constraint
+		l <= sum{k in R} wk*xk <= u
+		xk in {0,1}
+	eg.
+		10 <= 2*x1 + 3*x2 + 4*x3 + 5*x4 <= 12
+	- feasibility is easily observed
+	- use dynamic programming for feasibility
+		- pseudo-polynomial
+	- exploit DP table for pruning
+		- forward phase builds dependency links
+		- backward phase updates dependency links to only feasible values
+		- combnies feasibility with pruning
+	- forward phase
+		- build table to propagate value graph from choice at each variable
+		- if any path leads to the feasible region then it's feasible
+	- backward phase
+		- look at all incoming edges to the feasible region
+		- if edges exclude some choice then can prune that choice from domain
+			- for binary knapsack it's either take or not
+		- propagate backwards
+
+-----------------------------------------------------------
+    Alldifferent
+-----------------------------------------------------------
