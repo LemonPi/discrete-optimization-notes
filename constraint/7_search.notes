@@ -1,0 +1,89 @@
+-----------------------------------------------------------
+    Overview
+-----------------------------------------------------------
+- key idea is to use feasibility for branching
+- fail first principle
+	- try first where you are most likely to fail
+	- want to fail early
+	- select values for variables with the smallest domain first
+	- select variables that share constraints with the most other variables first
+- goal is to create small search trees
+- search is always adding constraint to constraint store
+- constraint store always sending success/fail result back to search
+
+
+-----------------------------------------------------------
+    Euler Knight
+-----------------------------------------------------------
+- use a knight to visit all chess positions exactly once
+- abstraction for many real problems
+	- puzzles with links
+	eg. vehicle routing
+- model
+	range Board = 1..64
+	// Knightmoves describes what positions each position can move to
+	var{int} jump[i in Board] in Knightmoves(i)
+
+	solve
+		circuit(jump)
+- choose starting position most likely to fail
+	- corners
+		- only 2 positions to jump to
+- will then choose another corner because those 2 choices fewer than from the jumped ones
+	- don't have to be continuous at each assignment stage
+
+-----------------------------------------------------------
+    Nondeterministic instruction
+-----------------------------------------------------------
+tryall(v in R)
+	- randomly selects a value v from R that hasn't been selected before
+	- runs the following block
+	- tries a different value and reruns if block fails
+	- goes to previous tryall instruction if all values used and still failed
+
+-----------------------------------------------------------
+    Variable/Value labelling
+-----------------------------------------------------------
+- choose variable to assign
+- choose value to assign
+- apply fail-first principle
+	- choose variable with smallest domain
+	- re-evaluate after each propagation
+	- if some domain sizes are tied, choose most constrained variable of those
+		eg. for placing a queen, first choose based on number of slots available on row, then pick one close to middle
+- choose value that leaves as many options to other variables
+
+-----------------------------------------------------------
+    Serializable Data Services
+-----------------------------------------------------------
+- map software to hardware to minimize network traffic due to protocol
+- becomes generalized quadratic assignment problem
+	- f = communication frequency matrix
+		- how much any 2 components interact with each other
+	- h = distance matrix
+		- distance between hardware
+	- x = assignment vector (decision variable)
+		- for each software, which hardware to run it
+	- C = set of components (software components)
+	- Sep = separation constraints
+		- 2 components cannot be on the same machine
+	- Col = colocation constraints 
+		- 2 components must be on the same machine
+	- objective function
+		min(x in N^n) sum(a in C) sum(b in C) f[a,b] * h[xa,xb]
+- model
+	minimize
+		sum(a in C, b in C: a != b) f[a,b] * h[x[a], x[b]]
+	subject to
+		forall(S in Col, c1 in S, c2 in S: c1 < c2)
+			x[c1] = x[c2]
+		forall(S in Sep)
+			alldifferent(all(c in S) x[ c ])
+- solve using
+	while (not bound(x))
+		// get component that communicate the most with any other component
+		selectMax(i in C: not x[i].bound(), j in C)(f[i,j])
+			// don't increase objective function too much
+			// start first with those minimizing number of hops to j
+			tryall(n in N) by (min(l in x[j].memberOf(l)) h[n,l])
+				x[i] = n
