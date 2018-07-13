@@ -38,3 +38,54 @@
 -----------------------------------------------------------
     Alldifferent
 -----------------------------------------------------------
+- create bipartite graph
+	- vertices
+		- variable
+		- values
+	- edges
+		- between a variable and the values in its domain
+- determining feasibility is finding a maximum #matching# equal to the number of variables
+	- a matching for graph G=(V,E) is a set of edges in E s.t. no 2 edges in it share a vertex
+	- a #maximum matching# M for a graph G is a matching with the most edges
+- how to find max matching?
+	- start with any matching
+	- improve the matching
+		- have max matching when no improvement is possible
+		- always selecting a few edges and replacing them with more edges
+		1. start with a free vertex x
+			- a variable that's not assigned a value in Alldifferent
+		2. if there's an edge (x,v) where v is not matched, insert (x,v) to the matching
+		3. otherwise take a vertex v matched to y and remove (y,v), add (x,v) and restart at step 2 with y
+			- propagate change forward
+		- essentially finding an alternating path s.t. edges in path are alternatively in E\M and M
+		- how to find alternative paths?
+			- create directed graph given a matching
+				- edges in matching go from bottom -> top
+				- edges not in matching go top -> bottom
+			- an alternating path is a path starting from a free vertex x (top) and ending in a free vertex v (bottom)
+			- once found, reverse all edge directions along the path found
+			- can use depth first or best first search
+				- O(|X| + |E|)
+- pruning
+	- v cannot be in x's domain if (x,v) appears in no max matching
+	- naive approach
+		- force edge (x,v) in the matching
+		- search for a max matching
+		- if size is < number variables then can prune v
+		- too slow
+	- Berge property (1970)
+		- an edge belongs to some but not all max matchings iff given a max matching M it belongs to either
+			- an even alternating path starting at a free vertex
+			- an even alternating cycle
+		- note that the edges not in the max matching do not belong to all max matchings
+		- property then tells us whether they belong to >= 1 max matching
+		- free vertices in this case are the values
+			- since we know it's feasible, all the variables are matched
+	- steps using Berge property
+		0. given a matching: M
+		1. create directed graph like before but reverse edges
+		2. find even alternating path starting from a free vertex: P
+			- the longer it is the more values we know can't be removed
+		3. search for all strongly connected components and collect all edges belonging to them: C
+		4. remove all edges not in M, P, or C
+		- O((|X| + |V|) * |E|)
