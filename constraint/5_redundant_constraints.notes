@@ -75,3 +75,36 @@
 - combination of existing constraints
 	- such as through linear combination
 - improves global view/communication between constraints
+
+-----------------------------------------------------------
+    Dual modelling
+-----------------------------------------------------------
+- sometimes there are multiple ways to model
+	- different decision variables
+- could have complementary strengths
+	- constraints easier to express in one than the other
+- idea is to put both models in and link them with constraints
+eg. 8 queens problem
+	- one model
+		- decision variable is each column
+			- variable value is row of queen placed in this column
+	- another model
+		- decision variable is each row
+			- variable value is col of queen placed in this row
+	- combined model
+		range R = 1..8
+		range C = 1..8
+		var{int} row[C] in R
+		var{int} col[R] in C
+
+		solve
+		forall(i in R, j in R: i < j)
+			row[i] /= row[j]
+			row[i] /= row[j] + (j-i)
+			row[i] /= row[j] - (j-i)
+		forall(i in C, j in C: i < j)
+			col[i] /= col[j]
+			col[i] /= col[j] + (j-i)
+			col[i] /= col[j] - (j-i)
+		forall(r in R, c in C)
+			(row[ c ] = r) iff (col[ r ] = c)
