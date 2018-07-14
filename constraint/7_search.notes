@@ -87,3 +87,64 @@ tryall(v in R)
 			// start first with those minimizing number of hops to j
 			tryall(n in N) by (min(l in x[j].memberOf(l)) h[n,l])
 				x[i] = n
+
+-----------------------------------------------------------
+    Value/Variable Labelling
+-----------------------------------------------------------
+- choose value to assign next then variable to assign to
+- in practice there are cases where we know a value must be assigned
+	- particularly in scheduling and resource allocation problems
+
+-----------------------------------------------------------
+    Perfect Square Problem
+-----------------------------------------------------------
+- have a bunch of small squares and want to piece together to form big square
+- decision variables
+	- x and y coordinates of bottom left corner of each square
+		- can use any other consistent position's coordinate
+- constraints
+	- squares fit in larger square
+	- squares don't overlap
+- redundant constraints
+	- line intersecting squares (a given x value for a vertical line)
+	whose side lengths must sum to the larger square's side length
+- model
+	// define big square; example values
+	int s = 122
+	range Side = 1..s
+	// define smaller squares; example values
+	range Square = 1..21
+	// side length of each smaller square
+	int side[Square] = [50, 42, 37, ...]
+	var{int} x[Square] in Side
+	var{int} y[Square] in Side
+
+	solve
+		// inside big square
+		forall(i in Square)
+			x[i] <= s-side[i]+1
+			y[i] <= s-side[i]+1
+
+		// not intersecting with another square
+		// either to the left, right, up, or below
+		forall(i in Square, j in Square: i < j)
+			x[i]+side[i] <= x[j] || x[j]+side[j] <= x[i] || y[i]+side[i] <= y[j] || y[j]+side[j] <= y[i]
+
+		// redundant constraints
+		forall(p in Side)
+			(sum(i in Square) side[i] * ((x[i]<=p) && (x[i]>=p-side[i]+1))) = s
+			(sum(i in Square) side[i] * ((y[i]<=p) && (y[i]>=p-side[i]+1))) = s
+- use value/variable labelling
+	- we know there can't be any empty space so we know what values must be chosen
+	- choose x-coordinate p
+	- for all squares i, choose whether to place i at p
+	- repeat for all x coordinates
+	- repeat for all y coordinates
+
+	forall(p in Side)
+		forall(i in Square)
+			try
+				x[i] = p
+			|
+				x[i] != p
+	// repeat for y
