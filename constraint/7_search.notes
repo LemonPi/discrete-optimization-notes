@@ -208,3 +208,40 @@ eg. 2 9 4
 	using
 		var{int}[ ] x = all(i in R, j in R) s[i,j]
 		range
+
+-----------------------------------------------------------
+    Symmetry Breaking
+-----------------------------------------------------------
+eg. Scene Allocation problem
+	- basics
+		- actor plays in some scenes
+		- at most k scenes shot per day
+		- each actor is paid by the day
+	- minimize total cost
+	- symmetries
+		- days
+	- previously broke symmetry by introducing constraint looking at only current & next day
+		- interferese with any search heuristic
+		- constraints imposing a variable search order since their domains are greatly affected
+		- can avoid this by moving the constraints dynamically into the search
+			- same constraints
+			- order is different and discovered dynamically
+	1. choose a scene to shoot
+		- use heuristic
+		- first-fail (smallest domain)
+		- on ties choose most expensive scene
+	2. consider existing days + 1 new day
+		- breaks symmetry
+		- doesn't interfere with search heuristic
+[s]
+	using
+		while (!bound(shoot))
+			# existing days
+			int eday = max(-1, maxBound(shoot))
+			# dynamic ordering by 2 critera
+			selectMin(s in Scenes: !shoot[s].bound()) (shoot[s].getSize(), -sum(a in appears[s]) fee[a])
+				# only consider all existing days and the next one
+				tryall(d in 0..eday + 1)
+					shoot[ s ] = d
+
+[s]
