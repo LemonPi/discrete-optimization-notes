@@ -245,3 +245,18 @@ eg. Scene Allocation problem
 					shoot[ s ] = d
 
 [s]
+
+
+-----------------------------------------------------------
+    Randomization and Restarts
+-----------------------------------------------------------
+- sometimes there is no obvious search order
+	- may have a few good ones
+- find them with brute force
+	- randomization and restart
+- try a random ordering
+	- if no solution is found after some limit, restart
+eg. very useful for magic square problem
+	- apply heuristic but choose 1/3 best variables
+	- increase time limit on failure
+- integrates seamlessly on top of existing search structures
