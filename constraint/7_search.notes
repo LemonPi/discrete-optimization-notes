@@ -148,3 +148,63 @@ tryall(v in R)
 			|
 				x[i] != p
 	// repeat for y
+
+-----------------------------------------------------------
+    Domain Splitting
+-----------------------------------------------------------
+- choose a variable
+- split its domain into two or more sets
+	- less commitment than choosing a specific value
+- very good on car sequencing problems
+	- focus on diffuclt options
+	- decide which slots take these options
+[s]
+	using
+		# choose option with least slack/most difficult
+		forall(o in Options) by (slack[o])
+			forall(i in Slots)
+				# force slot to take the option
+				try
+					# essentially splitting domain of slot into two parts (those with this option and those without)
+					line[i] in options[o]
+				|
+					line[i] notin options[o]
+[s]
+
+-----------------------------------------------------------
+    Magic Square Problem
+-----------------------------------------------------------
+- place numbers in a square matrix
+	- all numbers are different
+	- 1 to number of slots
+- all rows, cols, and diagonals must sum to same value
+eg. 2 9 4
+	7 5 3
+	6 1 8
+- model
+
+[s]
+	range R = 1..n
+	range D = 1..n^2
+	# have to sum to this sum total sum of numbers is fixed (sum(1..n^2)) then divide by number of rows n
+	# sum(1..n^2) = n^2*(n^2+1)/2
+	int T = n*(n^2+1)/2
+	var{int} s[R,R] in D
+
+	solve
+		forall(i in R)
+			sum(j in R) s[i,j] = T
+			sum(j in R) s[j,i] = T
+		sum(i in R) s[i,i] = T
+		sum(i in R) s[i,n-i+1] = T
+		alldifferent(all(i in R, j in R) s[i,j])
+[s]
+- choosing a variable to assign a value is completely random
+	- very strong commitment
+- instead can domain split by splitting its down in two or more sets
+	- much weaker commitment
+
+- model
+	using
+		var{int}[ ] x = all(i in R, j in R) s[i,j]
+		range
