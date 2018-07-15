@@ -6,6 +6,7 @@ from search import BacktrackSearch
 from csp_base import CSP
 from csp_base import Variable
 from csp_base import DifferentConstraint
+import itertools
 
 
 # symmetry of all colour values (since they are the same) break by always selecting the lowest available one
@@ -36,11 +37,23 @@ def get_output(nodes: typing.List[Node], is_optimal=False):
     return num_colours, is_optimal, assignments
 
 
-def greedy(nodes: typing.List[Node]):
-    # first consider greedy algorithm
-    # list nodes in descending order of degree
-    nodes.sort(key=lambda node: node.degree(), reverse=True)
+def brute_force(nodes: typing.List[Node]):
+    # optimal brute force solution by trying all vertex orderings
+    best_assignment = None
+    best_colours = math.inf
 
+    for node_ordering in itertools.permutations(nodes):
+        greedy_colour_assignment(node_ordering)
+
+        num_colours, _, assignments = get_output(list(node_ordering))
+        if num_colours < best_colours:
+            best_colours = num_colours
+            best_assignment = assignments
+
+    return best_colours, True, best_assignment
+
+
+def greedy_colour_assignment(nodes: typing.List[Node]):
     for u in nodes:
         # choose smallest colour possible from neighbours
         neighbouring_colours = set(v.colour for v in u.neighbours)
@@ -48,8 +61,15 @@ def greedy(nodes: typing.List[Node]):
         while c in neighbouring_colours:
             c += 1
         u.colour = c
-
         # print("{} degree {} colour {}".format(u.id, u.degree(), u.colour))
+
+
+def greedy(nodes: typing.List[Node]):
+    # first consider greedy algorithm
+    # list nodes in descending order of degree
+    nodes.sort(key=lambda node: node.degree(), reverse=True)
+
+    greedy_colour_assignment(nodes)
 
     return get_output(nodes)
 
@@ -132,7 +152,10 @@ def solve_it(input_data):
         u, v = [int(part) for part in parts]
         nodes[u].assign_neighbour(nodes[v])
 
-    method = csp
+    if node_count <= 9:
+        method = brute_force
+    else:
+        method = csp
 
     out = format_output(*method(nodes))
     return out
