@@ -34,6 +34,14 @@ class Node:
         node.neighbours.append(self)
 
 
+def get_output(nodes: typing.List[Node], is_optimal=False):
+    nodes.sort(key=lambda node: node.id)
+    assignments = [n.colour for n in nodes]
+    num_colours = max(assignments) + 1
+
+    return num_colours, is_optimal, assignments
+
+
 def greedy(nodes: typing.List[Node]):
     # first consider greedy algorithm
     # list nodes in descending order of degree
@@ -49,13 +57,7 @@ def greedy(nodes: typing.List[Node]):
 
         # print("{} degree {} colour {}".format(u.id, u.degree(), u.colour))
 
-    # retrieve output
-    nodes.sort(key=lambda node: node.id)
-    assignments = [n.colour for n in nodes]
-    num_colours = max(assignments) + 1
-    lower_bound = min((n.degree() for n in nodes)) + 1
-
-    return num_colours, num_colours == lower_bound, assignments
+    return get_output(nodes)
 
 
 def solve_it(input_data):
@@ -76,6 +78,7 @@ def solve_it(input_data):
         nodes[u].assign_neighbour(nodes[v])
 
     method = greedy
+    # can use greedy algorithm as the baseline (won't need more colours than it)
 
     out = format_output(*method(nodes))
     return out
