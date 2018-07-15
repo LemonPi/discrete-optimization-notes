@@ -175,6 +175,14 @@ class FunctionConstraint(Constraint):
         return self._func(*self._scope)
 
 
+class DifferentConstraint(Constraint):
+    def __init__(self, a: Variable, b: Variable):
+        super().__init__([a, b])
+
+    def check_feasible(self):
+        return self._scope[0].assigned_value() != self._scope[1].assigned_value()
+
+
 class CSP:
     """Class for packing up a set of variables and constraints into a CSP problem.
 
