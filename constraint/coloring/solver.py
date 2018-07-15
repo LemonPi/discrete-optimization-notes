@@ -7,6 +7,12 @@ from csp_base import CSP
 from csp_base import Variable
 from csp_base import DifferentConstraint
 import itertools
+import random
+import timeout
+import time
+import logging
+
+logger = logging.getLogger(__name__)
 
 
 # symmetry of all colour values (since they are the same) break by always selecting the lowest available one
@@ -79,6 +85,7 @@ def csp(nodes: typing.List[Node]):
         min_domain = math.inf
         chosen_i = None
         vs = csp.variables()
+        chosen = []
 
         for i in range(len(vs)):
             v = vs[i]
@@ -90,8 +97,15 @@ def csp(nodes: typing.List[Node]):
                     v.domain_size() == min_domain and n.degree() > nodes[chosen_i].degree()):
                 chosen_i = i
                 min_domain = v.domain_size()
+                chosen.append(chosen_i)
 
-        return (vs[chosen_i], chosen_i) if chosen_i is not None else (None, None)
+        # randomly choose from the top of the ones chosen
+        if chosen_i is None:
+            return None, None
+
+        # choose from the best 3
+        chosen_i = random.choice(chosen[-3:])
+        return vs[chosen_i], chosen_i
 
     def select_next_val(csp: CSP, var_i):
         node = nodes[var_i]
@@ -106,6 +120,10 @@ def csp(nodes: typing.List[Node]):
 
     # can use greedy algorithm as the baseline (won't need more colours than it)
     max_colours, _, assignments = greedy(nodes)
+
+    # how much time to spend on everything
+    total_timeout = 60 * 60
+    total_start = time.time()
 
     best_colours = max_colours
     # try to decrease the number of colours
@@ -124,9 +142,37 @@ def csp(nodes: typing.List[Node]):
 
         # try to solve (assume last solution was the best if this time we can't solve for it)
         bt = BacktrackSearch(csp, select_next_variable=select_next_var, select_next_value=select_next_val)
-        solution = bt.search()
+
+        # use randomization and restarts to try to improve results
+        # each search will have a timeout
+        search = timeout.timeout(200)(bt.search)
+        solution = None
+
+        # in addition to total timeout
+        start_time = time.time()
+        # how much time to spend on a single colour
+        colour_timeout = 60 * 60
+        while True:
+            current_time = time.time()
+            total_elapsed = current_time - total_start
+            if total_elapsed > total_timeout:
+                break
+
+            elapsed = current_time - start_time
+            if elapsed > colour_timeout:
+                break
+
+            try:
+                solution = search()
+                logger.debug("Search took {} seconds".format(time.time() - current_time))
+            except TimeoutError:
+                break
+
+            if solution:
+                break
 
         if solution:
+            logger.debug("Solution for {} colours found in {} seconds".format(num_colours, time.time() - start_time))
             best_colours = num_colours
             assignments = solution
         else:
@@ -170,6 +216,9 @@ def format_output(num_colors, proven_optimal, colour_assignments):
 
 if __name__ == '__main__':
     import sys
+
+    logging.basicConfig(level=logging.DEBUG)
+    logger.setLevel(logging.DEBUG)
 
     if len(sys.argv) > 1:
         file_location = sys.argv[1].strip()
