@@ -190,10 +190,10 @@ class CSP:
         self._cons.append(constraint)
 
     def constraints(self) -> typing.List[Constraint]:
-        return self._cons
+        return list(self._cons)
 
     def variables(self) -> typing.List[Variable]:
-        return self._vars
+        return list(self._vars)
 
     def constraints_involving_variable(self, variable) -> typing.List[Constraint]:
         return list(self._vars_to_cons[variable])
