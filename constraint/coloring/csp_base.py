@@ -75,6 +75,9 @@ class Variable:
         self._current_iter = 0
         return self
 
+    def enumerate(self):
+        return VariableEnumerator(self)
+
     def __next__(self):
         max_length = len(self._values)
         # this iteration makes it safe to prune current value as we iterate
@@ -86,6 +89,22 @@ class Variable:
 
         self._current_iter += 1
         return self._values[self._current_iter - 1]
+
+
+class VariableEnumerator:
+    def __init__(self, variable: Variable):
+        self._v = variable
+
+    def __iter__(self):
+        if self._v._assigned_value is not None:
+            return iter([(self._v._values.index(self._v._assigned_value), self._v._assigned_value)])
+
+        self._v._current_iter = 0
+        return self
+
+    def __next__(self):
+        val = next(self._v)
+        return self._v._current_iter - 1, val
 
 
 class Constraint(abc.ABC):
