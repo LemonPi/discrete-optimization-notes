@@ -130,7 +130,6 @@ class Constraint(abc.ABC):
                 unassigned.append(v)
         return unassigned
 
-    @abc.abstractmethod
     def check_feasible(self):
         """Whether any combination of values in its variables' domains can satisfy this constraint"""
         for assignment in itertools.product(*self._scope):
@@ -143,7 +142,6 @@ class Constraint(abc.ABC):
         """Test if this constraint works with given assigned values (in the same order as variables)."""
         return True
 
-    @abc.abstractmethod
     def prune_domains(self):
         """
         Prune the domain of the variables in this constraint's scope by exploiting the structure of the constraint.
