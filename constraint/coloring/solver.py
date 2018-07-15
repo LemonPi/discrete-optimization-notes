@@ -8,16 +8,6 @@ import typing
 # how to deal with constraint on upper bound of colour? Is there an upper bound?
 # one upper bound is max degree d + 1
 
-class Variable:
-    def __init__(self, domain=()):
-        self._domain = domain
-        self._value = None
-
-    def domain_size(self):
-        return len(self._domain) if self._value is None else 1
-
-    def assign_value(self, value):
-        self._value = value
 
 
 class Node:
