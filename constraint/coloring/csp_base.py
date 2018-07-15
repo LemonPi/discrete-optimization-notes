@@ -110,16 +110,20 @@ class Constraint(abc.ABC):
                 unassigned.append(v)
         return unassigned
 
+    @abc.abstractmethod
     def check_feasible(self):
         return True
 
+    @abc.abstractmethod
     def prune_domains(self):
         """
         Prune the domain of the variables in this constraint's scope by exploiting the structure of the constraint.
 
         By default does forward checking.
         """
+        return self.forward_check()
 
+    def forward_check(self):
         pruned = []
 
         domain_wipeout = False
@@ -141,3 +145,55 @@ class Constraint(abc.ABC):
 
         domain_wipeout = unassigned_variable.domain_size() == 0
         return domain_wipeout, pruned
+
+
+class FunctionConstraint(Constraint):
+    def __init__(self, variables: typing.List[Variable], call_able):
+        super().__init__(variables)
+        self._func = call_able
+
+    def check_feasible(self):
+        return self._func(*self._scope)
+
+
+class CSP:
+    """Class for packing up a set of variables and constraints into a CSP problem.
+
+    Contains various utility routines for accessing the problem.
+    The variables of the CSP can be added later or on initialization.
+    The constraints must be added later
+    """
+
+    def __init__(self, variables):
+        self._vars = []
+        self._cons = []
+        self._vars_to_cons = {}
+        for v in variables:
+            self.add_variable(v)
+
+    def add_variable(self, variable):
+        if not isinstance(variable, Variable):
+            raise TypeError("Variable is not of type Variable")
+
+        self._vars.append(variable)
+        self._vars_to_cons[variable] = []
+
+    def add_constraint(self, constraint):
+        if not isinstance(constraint, Constraint):
+            raise TypeError("Constraint is not of type Constraint")
+
+        for v in constraint.scope():
+            if v not in self._vars_to_cons:
+                raise RuntimeError("Trying to add constraint with an unknown variable to the CSP object")
+            self._vars_to_cons[v].append(constraint)
+
+        self._cons.append(constraint)
+
+    def constraints(self):
+        return self._cons
+
+    def variables(self):
+        return self._vars
+
+    def constraints_involving_variable(self, variable):
+        return list(self._vars_to_cons[variable])
