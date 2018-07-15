@@ -1,5 +1,6 @@
 import typing
 import abc
+import itertools
 
 
 class Variable:
@@ -131,6 +132,15 @@ class Constraint(abc.ABC):
 
     @abc.abstractmethod
     def check_feasible(self):
+        """Whether any combination of values in its variables' domains can satisfy this constraint"""
+        for assignment in itertools.product(*self._scope):
+            if self.test(assignment):
+                return True
+        return False
+
+    @abc.abstractmethod
+    def test(self, values):
+        """Test if this constraint works with given assigned values (in the same order as variables)."""
         return True
 
     @abc.abstractmethod
@@ -152,15 +162,15 @@ class Constraint(abc.ABC):
             return domain_wipeout, pruned
 
         unassigned_variable = ua[0]
+        values = [v.assigned_value() for v in self._scope]
+        uv = values.index(None)
 
         # check all values of this variable
         for val in unassigned_variable:
-            unassigned_variable.assign(val)
-            if not self.check_feasible():
+            values[uv] = val
+            if not self.test(values):
                 unassigned_variable.prune(val)
                 pruned.append((unassigned_variable, val))
-
-        unassigned_variable.unassign()
 
         domain_wipeout = unassigned_variable.domain_size() == 0
         return domain_wipeout, pruned
@@ -171,16 +181,16 @@ class FunctionConstraint(Constraint):
         super().__init__(variables)
         self._func = call_able
 
-    def check_feasible(self):
-        return self._func(*self._scope)
+    def test(self, values):
+        return self._func(values)
 
 
 class DifferentConstraint(Constraint):
     def __init__(self, a: Variable, b: Variable):
         super().__init__([a, b])
 
-    def check_feasible(self):
-        return self._scope[0].assigned_value() != self._scope[1].assigned_value()
+    def test(self, values):
+        return values[0] != values[1]
 
 
 class CSP:
