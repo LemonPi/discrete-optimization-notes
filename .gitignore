@@ -1,6 +1,4 @@
 *.pyc
 .idea
-data
-_coursera
 sol
 **/venv/**
