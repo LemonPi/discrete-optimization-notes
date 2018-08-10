@@ -1,0 +1,54 @@
+-----------------------------------------------------------
+    Introduction
+-----------------------------------------------------------
+- move among configurations by performing local moves
+- starts with complete assignments
+	- modify assignments
+	- different from CP which tries to extend partial assignments
+- how to drive a local search
+	- satisfaction problems
+		- score based on feasibility
+		- transform into optimization problem
+	- pure optimization
+		- score based on optimality
+	- constrained optimization
+		- lots of options
+
+-----------------------------------------------------------
+    Local Move
+-----------------------------------------------------------
+- lots of choices
+- simplest is one assignment to a decision variable
+- how to select a move?
+	- max/min conflict
+- defines a neighbourhood
+
+-----------------------------------------------------------
+    Max/min conflict
+-----------------------------------------------------------
+- choose variable that appears in most violations
+- assign a value that minimizes its violations
+1. determine the number of conflicts associated with each decision variable
+2. choose the variable with the most conflicts
+3. for all possible values of this variable, see how assigning it to that changes its number of violations
+4. choose one of the moves that reduces its violations the most
+5. repeat from step 1
+
+-----------------------------------------------------------
+    Naive algorithm
+-----------------------------------------------------------
+[s]
+select a configuration c
+I = {n in N(c) | f(n) < f(c)}
+while (|I| > 0) 
+	c = select a configuration from I
+	I = {n in N(c) | f(n) < f(c)}
+[s]
+- finds local minima
+- key is how to escape local minima
+- f in satisfcation minimizes constraint violation
+	- f(c) = 0 means configuration c is feasible
+	- constraint violation
+		- 0/1 whether constraint violated
+		- degree of violation
+	- number of violations each variable is part of
