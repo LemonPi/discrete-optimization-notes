@@ -1,0 +1,27 @@
+-----------------------------------------------------------
+    Car sequencing
+-----------------------------------------------------------
+- capacity violations
+	- each option has a capacity expressed as M/N
+		- M units in time N
+		eg. 2/3
+	- evaluate violations by sliding a window of size N along time
+- neighbourhood
+	- swap 2 configuration (car)
+	- swap instead of assignment
+		- automatically maintain demand constraint
+		- illustrates hard and soft constraints
+			- hard must always be satisfied by local search
+			- soft can be gradually resolved
+
+-----------------------------------------------------------
+    Magic square
+-----------------------------------------------------------
+- hard constraint is all different
+	- keep satisfied by swapping
+- soft constraints are the sum equalities
+- 0/1 violations are pretty useless
+	- most moves won't change whether they're violated or not
+	- results in random walk
+- use abs(l - r) to measure degree of violation
+	- can move towards less violation
