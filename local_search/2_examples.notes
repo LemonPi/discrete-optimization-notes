@@ -25,3 +25,23 @@
 	- results in random walk
 - use abs(l - r) to measure degree of violation
 	- can move towards less violation
+
+-----------------------------------------------------------
+    Warehouse location
+-----------------------------------------------------------
+- set of fixed warehouses W each with fixed cost f_w for opening/maintaining
+- set of customers C
+- transformation cost t_wc from warehouse w to customer c
+- no constraints (apart from a customer has to be connected to a warehouse)
+- decision variables
+	- o_w whether warehouse w is open (0/1)
+	- a[ c ] the warehouse assigned to customer c
+- objective
+	- minimize sum{w E W} f_w * o_w + sum{c E C} t_a[ c ]c
+- once which warehouses should be open is decided, easy to select a[ c ]
+	- select warehouse with lowest t_wc since there are no capacity constraints
+- neighbourhood
+	- simplest is to flip the value of some o_w
+	- swap configuration of two o_w
+
+
