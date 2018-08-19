@@ -122,7 +122,7 @@ def csp(nodes: typing.List[Node]):
 
     # TODO select timesouts based on number of nodes and connectedness (problem hardness)
     # how much time to spend on everything
-    single_search_timeout = 20
+    single_search_timeout = 2000
     # how much time to spend on a single colour step down (increase to allow more restarts)
     colour_timeout = single_search_timeout * 5
     # how much time to spend on trying to reduce additional colours (increase to be more ambitious)
@@ -169,6 +169,12 @@ def csp(nodes: typing.List[Node]):
             try:
                 solution = searcher()
                 logger.info("Search took {} seconds".format(time.time() - current_time))
+                if not solution:
+                    logger.info("Could not exhaustively find a solution for {} colours".format(num_colours))
+                    break
+            except TimeoutError as e:
+                # retry
+                continue
             except Exception as e:
                 elapsed = time.time() - current_time
                 if abs(elapsed - single_search_timeout) > 1:
