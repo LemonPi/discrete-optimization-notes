@@ -1,0 +1,51 @@
+-----------------------------------------------------------
+    Graph colouring
+-----------------------------------------------------------
+- used as example for optimization under constraint
+- optimization for minimizing the number of colours
+- constraint is feasibility
+- combine in local search
+	- sequence of feasibility problems
+		1. find an initial solution with k colours
+			- can use greedy
+		2. remove one colour k
+		3. randomly reassign all previously k coloured vertices with colour in 1..k-1
+		4. find a feasible solution with k-1 colours
+			- minimize violations
+		5. repeat until can't find feasible solution
+		- very similar to constraint satisfaction
+	- staying in space of solutions
+		- what we've been doing so far (neighbourhoods stay in solution space)
+		- only care about objective function
+		- introduce colour class
+			- Ci is the set of vertices coloured with i
+		- how to drive search
+			- use a proxy as objective function
+			- favour large colour classes
+			- objective function becomes maximize sum{i} |Ci|^2
+		- use Kemp Chains to help find neighbours
+			- look at 2 colour classes
+			- consider strongly connected components between the two colour classes
+			- inside a strongly connected component, valid to swap colours
+	- consider feasible and infeasible configurations
+		- larger space to consider
+		- use an objective function balancing feasiblity and optimality
+		- make sure local optima are feasible
+		- neighbourhood can be very simple: change the colour of a vertex
+		- a bad edge is an edge between vertices of the same colour
+		- Bi is the set of bad edges between vertices with colour i
+		- decrease number of colours with max sum{i} |Ci|^2
+		- remove biolations with min sum{i} |Bi|
+		- combine those two objectives
+			min sum{i} 2*|Bi||Ci| - |Ci|^2
+			- guarantees local minima are legal colourings
+				- consider colouring C1..Ck
+				- assume Bi is not empty
+				- can prove this colouring is not a local minimum
+					- select an edge in Bi and colour one of its vertices k+1 instead of i
+					- look at effect on objective function
+						- left term decreases by
+							2|Bi||Ci| - 2(|Bi|-1)(|Ci|-1) = 2|Bi| + 2|Ci| - 2 >= 2|Ci|
+						- right term increased by
+							|Ci|^2 - ((|Ci|-1)^2 + 1) = 2|Ci| - 2
+						- therefore objective function gets a net decrease >=2
