@@ -1,0 +1,31 @@
+-----------------------------------------------------------
+    Sports scheduling
+-----------------------------------------------------------
+- travelling tournament problem (TTP)
+	- abstraction of major league baseball
+- input
+	- n teams
+	- matrix d of distances between teams
+- output
+	- a double round robin schedule
+		- each team must meet twice, once in each arena
+		- atmost constraint of <=3 consecutive games at home or away
+		- no repeat constraint of a @ b cannot be followed by b @ a
+		- minimize travel distance
+- neighbourhood is a number of moves
+	- swap homes
+		- change a @ b, b @ a to b @ a, a @ b on the same slots
+	- swap rounds
+		- swap all team schedules between 2 rounds
+		- may violate atmost and repeat constraints, but maintains double round robin
+	- swap teams
+		- swap two team's schedules for all rounds
+		- also have to swap the opponents of those two teams to maintain symmetry
+		- affects a large part of the schedule
+	- partial swap rounds
+		- swap a subset of a round with another round
+		- have to look at connected component involving those involved in the swap
+		- all those involved have to be swapped
+	- partial swap teams
+		- swap two team's schedules for some rounds
+		- have to propagate change to avoid duplicate teams by swapping those between the two teams
