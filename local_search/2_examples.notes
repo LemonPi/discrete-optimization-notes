@@ -45,3 +45,31 @@
 	- swap configuration of two o_w
 
 
+-----------------------------------------------------------
+    Travelling salesman
+-----------------------------------------------------------
+- set of cities
+- symmetric distance matrix from each city to another
+- must complete a circuit as the constraint
+	- can ignore this constraint if we always ensure this is true
+- interesting question is what a neighbourhood is
+- crossings are bad
+- neighbourhoods
+	- 2-OPT
+		- select 2 edges and replace them by 2 other edges
+		- stay feasible (maintains a tour)
+		- replacement edges need to involve the same ones removed
+		- have to fix edge direction of some edges after replacement
+	- 3-OPT
+		- nieghbourhood is set of all tours that can be reached by swapping 3 edges
+		- much better than 2-OPT in quality but more expensive
+	- 4-OPT
+		- marginally better but much more expensive
+	- K-OPT
+		- search for a favourable sequence of swaps
+		- incrementally build sequence
+		- explore a sequence of swaps of increasing size
+		- compute cost but do not connect
+			- of a 2-OPT, 3-OPT, ...
+			- each restart use the vertices that would've been affected by the swap
+		- select optimal subsequence 
