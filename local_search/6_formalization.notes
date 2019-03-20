@@ -1,0 +1,61 @@
+-----------------------------------------------------------
+    Local Search
+-----------------------------------------------------------
+- states
+	- either solutions or configurations
+- neighbours
+	- N(s) : neighbourhood of s
+- some neighbours are legal
+	- L(N(s),s) : set of legal neighbours
+- select some neighbour
+	- S(L(N(s),s),s)
+		- selection function
+- goal is to optimize objective function
+- general algo
+	s := GenerateInitialSolution();
+	s* := s;
+	for k := 1 to MaxTrials do
+		if satisfiable(s) and f(s) < f(s*) then
+			s* := s;
+		s := S(L(N(s),s),s);
+	return s*;
+
+-----------------------------------------------------------
+    Legal Moves
+-----------------------------------------------------------
+eg. legal improvements
+	- L(N,s) = {n in N | f(n) < f(s)}
+eg. no degredation
+	- L(N,s) = {n in N | f(n) <= f(s)}
+eg. potential degredation
+	- L(N,s) = N
+
+-----------------------------------------------------------
+    Selection
+-----------------------------------------------------------
+eg. greedy selection
+	- S(L,s) = argmin{n in L} f(n)
+	- if some equally good, select them uniform randomly
+eg. first neighbourhood
+	- select first legal neighbour
+eg. multistage selection
+	- avoid scanning entire neighbourhood
+	- keep some greedy flavour
+
+-----------------------------------------------------------
+    Hueristics and Metaheuristics
+-----------------------------------------------------------
+- heuristics drive search towards a local minima
+	- some combination of legal and selection
+- metaheuristics escape local minima
+	- typically include some memory or learning
+- !multistage heuristics!
+	eg. max/min-conflict
+		1. select variable with most violations (greedy)
+		2. select value with fewest resulting violations (greedy)
+	eg. min-conflict
+		1. randomly select a variable with some violation (randomized)
+		2. select value with fewest resulting violations (greedy)
+	- approximates a more full neighbourhood
+		- in n-queens problem, can instead consider the neighbourhood of all queens' possible moves
+			- quadratic in size to number of queens whereas our previous neighbourhoods are linear
