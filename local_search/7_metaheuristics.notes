@@ -1,0 +1,17 @@
+-----------------------------------------------------------
+    Metaheuristic
+-----------------------------------------------------------
+- simplest idea is iterated local search
+	- aka restarts
+	- very generic
+	- works in combination with other metaheuristics
+- metropolis heuristic
+	- accept a move if it improves
+	- probabilistically accept a degredation
+		- exp(-\Delta/t)
+		- temperature parameter
+- simulated annealing
+	- metropolis but with decreasing temperature
+- tabu search
+	- remember visited nodes to avoid revisit
+	- select best non-tabu configuration
