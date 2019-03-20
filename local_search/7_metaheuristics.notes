@@ -15,3 +15,31 @@
 - tabu search
 	- remember visited nodes to avoid revisit
 	- select best non-tabu configuration
+
+-----------------------------------------------------------
+    Tabu search
+-----------------------------------------------------------
+- an issue is it's expensive to maintain list of all visited nodes
+	- one solution is to use short-term memory
+		- only keep a small suffix of visited nodes
+			- last 20
+		- increase and decrease list size dynamically
+			- decrease when selected node degrades objective
+			- increase when selected node improves objective
+- sometimes still too costly to compare entire solutions
+	- can keep an abstraction of suffix
+	eg. car sequencing
+		- store transitions (swaps) instead of the states
+		- not an exact abstraction, but captures some neighbourhood
+		- can implement with tabu[i,j] holding the next iteration when (i,j) can be swapped
+	- abstractions could be simultaneously too weak and strong
+		- when the abstraction is a poor embedding of the state
+		- can add more information to abstraction to get better 1-1 mapping
+			eg. store transitions and objective values for car sequencing
+		- can also override tabu if it achieves better than current global optima
+- intensification
+	- store high quality solutions and return to them periodically
+	- meant to avoid long walks without improvement
+	- works well in practice
+- diversification
+	- randomly change the value of some variables when search is not producing improvements
