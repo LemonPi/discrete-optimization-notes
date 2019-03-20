@@ -1,0 +1,7 @@
+-----------------------------------------------------------
+    Connectivity
+-----------------------------------------------------------
+- important quality for solving problems
+- if the optimum solution can be reached with just local moves
+- proofs involve assuming we know the optimal solution and seeing if local assignments can be made to get there
+	- create simple algo to proove
