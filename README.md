@@ -1,4 +1,9 @@
 ## Discrete Optimization Coursera course
+Goal is to solve optimization problems that are best modelled discretely.
+A continuous model is preferred because gradient based methods like stochastic gradient descent
+will work much faster (so try to make the problem continuous before falling back on these methods).
+
+Recent research has looked into embedding discrete spaces in continuous latent space: [auto chemical design](https://pubs.acs.org/doi/full/10.1021/acscentsci.7b00572)
 
 ### Modelling
 Problems can be modelled using a graph or integer linear programming.
