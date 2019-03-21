@@ -35,6 +35,24 @@ def brute_force(points):
     return solution, True
 
 
+def tabu_search(points):
+    solution = range(len(points))
+    # TODO implement taboo search
+    return solution, False
+
+
+def simulated_annealing(points):
+    solution = range(len(points))
+    # TODO implement simulated annealing
+    return solution, False
+
+
+def lower_bound(points):
+    # TODO create a path length lower bound for use as heuristic for example in branch and bound
+    # one way to do this is to create a minimum spanning tree then double all edges
+    return 0
+
+
 def solve_it(input_data):
     # Modify this code to run your optimization algorithm
 
