@@ -5,6 +5,7 @@ import math
 import time
 from collections import namedtuple
 import itertools
+import random
 
 Point = namedtuple("Point", ['x', 'y'])
 
@@ -78,10 +79,98 @@ def tabu_search(points):
     return solution, False
 
 
-def simulated_annealing(points):
-    solution = range(len(points))
-    # TODO implement simulated annealing
-    return solution, False
+def random_indices(N):
+    """2 random indices between [1,N) that are more than 1 apart"""
+    while True:
+        a = random.randint(1, N - 1)
+        b = random.randint(1, N - 1)
+        if math.fabs(a - b) > 1:
+            return min(a, b), max(a, b)
+
+
+class BestSolutionsCache:
+    def __init__(self, num):
+        # number of solutions to keep
+        self.n = num
+        self.q = []
+        self.keys = set()
+
+    def add(self, cost, sol):
+        if len(self.q) < self.n:
+            self.q.append((cost, sol[:]))
+            self.q.sort(key=lambda x: x[0])
+            self.keys.add(cost)
+        elif cost < self.q[-1][0]:
+            if cost not in self.keys:
+                self.keys.discard(self.q[-1][0])
+                self.keys.add(cost)
+                self.q[-1] = (cost, sol[:])
+                self.q.sort(key=lambda x: x[0])
+
+
+def simulated_annealing(points, dists, start_solution=None, anneal=0.99, timeout=600):
+    start = time.perf_counter()
+
+    N = len(points)
+    if start_solution:
+        solution = start_solution[:]
+    else:
+        solution = range(N)
+        # initialize solution with greedy 2-opt
+        if N < 120:
+            solution, lowest_cost = greedy(points, dists)
+
+    lowest_cost = tour_length(solution, dists)
+    print("Starting simulated annealing with {}".format(lowest_cost))
+
+    # parameters
+    max_T = lowest_cost / 4
+    T = max_T
+    M = 5
+    prev_sols = BestSolutionsCache(M)
+    prev_sols.add(lowest_cost, solution)
+
+    k = 0
+    k_since_last_improvement = 0
+    while True:
+        if time.perf_counter() - start > timeout:
+            break
+
+        i, j = random_indices(N)
+
+        candidate = solution[:]
+        two_opt(candidate, i, j)
+
+        cost = tour_length(candidate, dists)
+        if cost < lowest_cost:
+            solution = candidate
+            lowest_cost = cost
+            k_since_last_improvement = k
+            prev_sols.add(cost, solution)
+            print("Moved to {}".format(lowest_cost))
+        else:
+            # maybe need to do some reheating or re-exploration
+            if k - k_since_last_improvement > 100:
+                T += max_T / 16
+                # go back to a previous solution
+                m = random.randint(0, len(prev_sols.q) - 1)
+                lowest_cost, solution = prev_sols.q[m]
+                k_since_last_improvement = k
+                print("Going back to {}".format(lowest_cost))
+            else:
+                # take it with some probability
+                d = cost - lowest_cost
+                p = math.exp(-d / T)
+                if random.random() < p:
+                    solution = candidate
+                    lowest_cost = cost
+                    prev_sols.add(cost, solution)
+                    print("Moved to {} with p {}".format(lowest_cost, p))
+
+        T *= anneal
+        k += 1
+
+    return prev_sols.q[0], False
 
 
 def lower_bound(points):
@@ -112,7 +201,8 @@ def solve_it(input_data):
     # visit the nodes in the order they appear in the file
     # solution, optimality = brute_force(points, dists)
     # solution = range(0, nodeCount)
-    solution, optimality = greedy(points, dists)
+    # solution, optimality = greedy(points, dists)
+    solution, optimality = simulated_annealing(points, dists)
 
     end = time.perf_counter()
     print("Took {} seconds".format(end - start))
