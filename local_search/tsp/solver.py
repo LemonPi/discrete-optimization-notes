@@ -118,7 +118,7 @@ def simulated_annealing(points, dists, start_solution=None, anneal=0.99, timeout
     if start_solution:
         solution = start_solution[:]
     else:
-        solution = range(N)
+        solution = list(range(N))
         # initialize solution with greedy 2-opt
         if N < 120:
             solution, lowest_cost = greedy(points, dists)
@@ -130,15 +130,22 @@ def simulated_annealing(points, dists, start_solution=None, anneal=0.99, timeout
     max_T = lowest_cost / 4
     T = max_T
     M = 5
+    ACTUAL_IMPROVEMENT_ITER = int(10000000 / N)
+    REXPLORE_WITHOUT_IMPROVEMENT = 100
     prev_sols = BestSolutionsCache(M)
     prev_sols.add(lowest_cost, solution)
 
     k = 0
+    k_since_last_timeout_check = 0
     k_since_last_improvement = 0
     k_since_actual_improvement = 0
     while True:
-        if time.perf_counter() - start > timeout:
-            break
+        if k - k_since_last_timeout_check > 500:
+            k_since_last_timeout_check = k
+            elapsed = time.perf_counter() - start
+            print(elapsed)
+            if elapsed > timeout:
+                break
 
         i, j = random_indices(N)
 
@@ -155,11 +162,11 @@ def simulated_annealing(points, dists, start_solution=None, anneal=0.99, timeout
             print("Moved to {}".format(lowest_cost))
         else:
             # maybe we're done and can't make any improvements
-            if k - k_since_actual_improvement > 500000:
+            if k - k_since_actual_improvement > ACTUAL_IMPROVEMENT_ITER:
                 print("Can't make progress so give up")
                 break
             # maybe need to do some reheating or re-exploration
-            if k - k_since_last_improvement > 100:
+            if k - k_since_last_improvement > REXPLORE_WITHOUT_IMPROVEMENT:
                 T += max_T / 16
                 # go back to a previous solution
                 m = random.randint(0, len(prev_sols.q) - 1)
