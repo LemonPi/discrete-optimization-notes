@@ -100,12 +100,15 @@ class BestSolutionsCache:
             self.q.append((cost, sol[:]))
             self.q.sort(key=lambda x: x[0])
             self.keys.add(cost)
+            return True
         elif cost < self.q[-1][0]:
             if cost not in self.keys:
                 self.keys.discard(self.q[-1][0])
                 self.keys.add(cost)
                 self.q[-1] = (cost, sol[:])
                 self.q.sort(key=lambda x: x[0])
+                return True
+        return False
 
 
 def simulated_annealing(points, dists, start_solution=None, anneal=0.99, timeout=600):
@@ -132,6 +135,7 @@ def simulated_annealing(points, dists, start_solution=None, anneal=0.99, timeout
 
     k = 0
     k_since_last_improvement = 0
+    k_since_actual_improvement = 0
     while True:
         if time.perf_counter() - start > timeout:
             break
@@ -146,9 +150,14 @@ def simulated_annealing(points, dists, start_solution=None, anneal=0.99, timeout
             solution = candidate
             lowest_cost = cost
             k_since_last_improvement = k
-            prev_sols.add(cost, solution)
+            if prev_sols.add(cost, solution):
+                k_since_actual_improvement = k
             print("Moved to {}".format(lowest_cost))
         else:
+            # maybe we're done and can't make any improvements
+            if k - k_since_actual_improvement > 500000:
+                print("Can't make progress so give up")
+                break
             # maybe need to do some reheating or re-exploration
             if k - k_since_last_improvement > 100:
                 T += max_T / 16
@@ -170,7 +179,7 @@ def simulated_annealing(points, dists, start_solution=None, anneal=0.99, timeout
         T *= anneal
         k += 1
 
-    return prev_sols.q[0], False
+    return prev_sols.q[0][1], False
 
 
 def lower_bound(points):
