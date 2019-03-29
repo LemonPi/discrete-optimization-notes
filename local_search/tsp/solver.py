@@ -2,6 +2,7 @@
 # -*- coding: utf-8 -*-
 
 import math
+import time
 from collections import namedtuple
 import itertools
 
@@ -30,6 +31,11 @@ def tour_length(order, dists):
     return obj
 
 
+def two_opt(order, i, j):
+    """Modify visit order by switching directions from i -> j to i <- j"""
+    order[i:j] = order[j - 1:i - 1:-1]
+
+
 def brute_force(points, dists):
     # enumerate all possible rearrangements (scales combinatorially)
     # can use as ground truth for smaller problems
@@ -44,6 +50,26 @@ def brute_force(points, dists):
             solution = candidate
 
     return solution, True
+
+
+def greedy(points, dists):
+    solution = list(range(len(points)))
+    candidate = solution[:]
+    lowest_cost = tour_length(solution, dists)
+    improved = True
+    while improved:
+        improved = False
+        for i in range(1, len(solution) - 2):
+            for j in range(i + 2, len(solution)):
+                new_candidate = candidate[:]
+                two_opt(new_candidate, i, j)
+                cost = tour_length(new_candidate, dists)
+                if cost < lowest_cost:
+                    lowest_cost = cost
+                    improved = True
+                    solution = new_candidate
+        candidate = solution
+    return solution, False
 
 
 def tabu_search(points):
@@ -82,15 +108,20 @@ def solve_it(input_data):
     dists = pairwise_dist(points)
 
     # build a trivial solution
+    start = time.perf_counter()
     # visit the nodes in the order they appear in the file
-    solution, optimality = brute_force(points, dists)
+    # solution, optimality = brute_force(points, dists)
     # solution = range(0, nodeCount)
+    solution, optimality = greedy(points, dists)
+
+    end = time.perf_counter()
+    print("Took {} seconds".format(end - start))
 
     # calculate the length of the tour
     obj = tour_length(solution, dists)
 
     # prepare the solution in the specified output format
-    output_data = '%.2f' % obj + ' ' + str(int(optimality)) + '\n'
+    output_data = '%.4f' % obj + ' ' + str(int(optimality)) + '\n'
     output_data += ' '.join(map(str, solution))
 
     return output_data
@@ -103,7 +134,10 @@ if __name__ == '__main__':
         file_location = sys.argv[1].strip()
         with open(file_location, 'r') as input_data_file:
             input_data = input_data_file.read()
-        print(solve_it(input_data))
+        output = solve_it(input_data)
+        print(output)
+        with open('sol', 'w') as out:
+            print(output, file=out)
     else:
         print(
             'This test requires an input file.  Please select one from the data directory. (i.e. python solver.py ./data/tsp_51_1)')
