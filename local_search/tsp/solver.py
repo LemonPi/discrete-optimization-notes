@@ -12,14 +12,25 @@ def length(point1, point2):
     return math.sqrt((point1.x - point2.x) ** 2 + (point1.y - point2.y) ** 2)
 
 
-def tour_length(points, order):
-    obj = length(points[order[-1]], points[order[0]])
+def pairwise_dist(points):
+    cache = {}
+    for i in range(len(points)):
+        for j in range(i + 1, len(points)):
+            d = length(points[i], points[j])
+            cache[(i, j)] = d
+            cache[(j, i)] = d
+
+    return cache
+
+
+def tour_length(order, dists):
+    obj = dists[(order[-1], order[0])]
     for index in range(len(order) - 1):
-        obj += length(points[order[index]], points[order[index + 1]])
+        obj += dists[(order[index], order[index + 1])]
     return obj
 
 
-def brute_force(points):
+def brute_force(points, dists):
     # enumerate all possible rearrangements (scales combinatorially)
     # can use as ground truth for smaller problems
     solution = None
@@ -27,7 +38,7 @@ def brute_force(points):
     # can also disallow rotational symmetry by fixing 0 as the first node (but only saves 1 element)
     indices = range(len(points))
     for candidate in itertools.permutations(indices):
-        cost = tour_length(points, candidate)
+        cost = tour_length(candidate, dists)
         if cost < lowest_cost:
             lowest_cost = cost
             solution = candidate
@@ -67,13 +78,16 @@ def solve_it(input_data):
         parts = line.split()
         points.append(Point(float(parts[0]), float(parts[1])))
 
+    # cache pairwise distances
+    dists = pairwise_dist(points)
+
     # build a trivial solution
     # visit the nodes in the order they appear in the file
-    solution, optimality = brute_force(points)
+    solution, optimality = brute_force(points, dists)
     # solution = range(0, nodeCount)
 
     # calculate the length of the tour
-    obj = tour_length(points, solution)
+    obj = tour_length(solution, dists)
 
     # prepare the solution in the specified output format
     output_data = '%.2f' % obj + ' ' + str(int(optimality)) + '\n'
